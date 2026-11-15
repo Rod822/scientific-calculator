@@ -12,6 +12,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import timber.log.Timber;
+
 import ua.knu.calculator.expression.AngleUnit;
 import ua.knu.calculator.expression.CalculatorException;
 import ua.knu.calculator.logic.Calculator;
@@ -105,10 +107,12 @@ public class MainActivity extends AppCompatActivity {
         String expression = input.getText();
         try {
             String result = calculator.calculate(expression);
+            Timber.d("%s = %s", expression, result);
             previousText.setText(
                     getString(R.string.expression_equals, expression));
             input.replaceWith(result);
         } catch (CalculatorException e) {
+            Timber.w("Cannot calculate %s: %s", expression, e.getMessage());
             previousText.setText(R.string.error);
         }
         showInput();
@@ -120,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             calculator.setAngleUnit(AngleUnit.DEGREES);
         }
+        Timber.i("Angle unit changed to %s", calculator.getAngleUnit());
         showAngleUnit();
     }
 
