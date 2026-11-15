@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Науковий калькулятор</string>
+    <string name="error">Помилка</string>
+    <string name="degrees">ГРАД</string>
+    <string name="radians">РАД</string>
+    <string name="language">Мова</string>
+</resources>

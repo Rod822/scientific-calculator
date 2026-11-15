@@ -1,6 +1,8 @@
 package ua.knu.calculator;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -8,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -24,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_TOKENS = "tokens";
     private static final String KEY_PREVIOUS = "previous";
     private static final String KEY_ANGLE_UNIT = "angle_unit";
+    private static final String KEY_ERROR = "error";
 
     private final Calculator calculator = new Calculator();
     private final ExpressionInput input = new ExpressionInput();
@@ -31,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView previousText;
     private TextView inputText;
     private Button angleButton;
+    private boolean errorShown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +77,11 @@ public class MainActivity extends AppCompatActivity {
             previousText.setText(savedInstanceState.getString(KEY_PREVIOUS));
             calculator.setAngleUnit(AngleUnit.valueOf(
                     savedInstanceState.getString(KEY_ANGLE_UNIT)));
+            // текст помилки беремо заново, бо мова могла змінитися
+            errorShown = savedInstanceState.getBoolean(KEY_ERROR);
+            if (errorShown) {
+                previousText.setText(R.string.error);
+            }
         }
         showInput();
         showAngleUnit();
@@ -82,6 +93,33 @@ public class MainActivity extends AppCompatActivity {
         outState.putStringArrayList(KEY_TOKENS, input.getTokens());
         outState.putString(KEY_PREVIOUS, previousText.getText().toString());
         outState.putString(KEY_ANGLE_UNIT, calculator.getAngleUnit().name());
+        outState.putBoolean(KEY_ERROR, errorShown);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_english) {
+            changeLanguage("en");
+            return true;
+        }
+        if (item.getItemId() == R.id.menu_ukrainian) {
+            changeLanguage("uk");
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void changeLanguage(String language) {
+        Timber.i("Language changed to %s", language);
+        // активність перестворюється, а введене відновлюється з Bundle
+        AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(language));
     }
 
     private void onInputClick(View button) {
@@ -92,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
     private void clear() {
         input.clear();
         previousText.setText("");
+        errorShown = false;
         showInput();
     }
 
@@ -111,9 +150,11 @@ public class MainActivity extends AppCompatActivity {
             previousText.setText(
                     getString(R.string.expression_equals, expression));
             input.replaceWith(result);
+            errorShown = false;
         } catch (CalculatorException e) {
             Timber.w("Cannot calculate %s: %s", expression, e.getMessage());
             previousText.setText(R.string.error);
+            errorShown = true;
         }
         showInput();
     }

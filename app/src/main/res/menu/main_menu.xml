@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_language"
+        android:title="@string/language"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/menu_english"
+                android:title="@string/english" />
+            <item
+                android:id="@+id/menu_ukrainian"
+                android:title="@string/ukrainian" />
+        </menu>
+    </item>
+
+</menu>

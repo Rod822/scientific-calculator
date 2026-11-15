@@ -3,6 +3,9 @@
     <string name="error">Error</string>
     <string name="degrees">DEG</string>
     <string name="radians">RAD</string>
+    <string name="language">Language</string>
+    <string name="english" translatable="false">English</string>
+    <string name="ukrainian" translatable="false">Українська</string>
     <string name="expression_equals" translatable="false">%1$s =</string>
 
     <!-- символи на кнопках не перекладаються -->
